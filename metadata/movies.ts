@@ -15,11 +15,9 @@ function getMovies(): Promise<string[]> {
       if (err) throw err;
       const newMovies = files.reduce((all, current) => {
         const id = getId(current);
-        return files.includes(`.[${id}].json`)
-          ? all
-          : all.concat(getId(current));
+        return files.includes(`.[${id}].json`) ? all : all.concat(id);
       }, []);
-      res(newMovies);
+      return res(newMovies);
     });
   });
 }
