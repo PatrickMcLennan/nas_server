@@ -9,22 +9,14 @@ function getId(movie: string) {
   return movie.split(`[`)[0].replace(`]`, ``).trim();
 }
 
-function getMovies(): Promise<string[]> {
-  return new Promise((res, rej) => {
-    return fs.readdir(process.env.MOVIES_DIR ?? `nothing`, (err, files) => {
-      if (err) throw err;
-      const newMovies = files.reduce((all: string[], current: string) => {
-        const id = getId(current);
-        return files.includes(`.[${id}].json`) || !id ? all : [id, ...all];
-      }, []);
-      return res(newMovies);
-    });
-  });
-}
-
-getMovies()
-  .then((res) => console.log(res))
-  .catch(console.error);
+fs.readdir(process.env.MOVIES_DIR ?? `nothing`, (err, files) => {
+  if (err) throw err;
+  const newMovies = files.reduce((all: string[], current: string) => {
+    const id = getId(current);
+    return files.includes(`.[${id}].json`) || !id ? all : [id, ...all];
+  }, []);
+  return console.log(newMovies);
+});
 
 // axios
 //   .get(
