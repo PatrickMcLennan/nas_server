@@ -11,11 +11,11 @@ function getId(movie: string) {
 
 function getMovies(): Promise<string[]> {
   return new Promise((res, rej) => {
-    fs.readdir(process.env.MOVIES_DIR, (err, files) => {
+    fs.readdir(process.env.MOVIES_DIR ?? `nothing`, (err, files) => {
       if (err) throw err;
-      const newMovies = files.reduce((all, current) => {
+      const newMovies = files.reduce((all: string[], current: string) => {
         const id = getId(current);
-        return files.includes(`.[${id}].json`) ? all : all.concat(id);
+        return files.includes(`.[${id}].json`) ? all : [id, ...all];
       }, []);
       return res(newMovies);
     });
