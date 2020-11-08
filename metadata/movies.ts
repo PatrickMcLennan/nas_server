@@ -5,16 +5,21 @@ import axios from 'axios';
 
 config();
 
+function getId(movie: string) {
+  return movie.split(`[`)[0].replace(`]`, ``).trim();
+}
+
 function getMovies(): Promise<string[]> {
   return new Promise((res, rej) => {
     fs.readdir(process.env.MOVIES_DIR, (err, files) => {
       if (err) throw err;
-      return res(
-        files.filter((file) => {
-          const id = file.split(`[`)[0].replace(`]`, ``).trim();
-          return !files.includes(`.[${id}].json`);
-        })
-      );
+      const newMovies = files.reduce((all, current) => {
+        const id = getId(current);
+        return files.includes(`.[${id}].json`)
+          ? all
+          : all.concat(getId(current));
+      }, []);
+      res(newMovies);
     });
   });
 }
