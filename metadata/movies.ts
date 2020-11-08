@@ -11,7 +11,7 @@ function getId(movie: string) {
 
 function getMovies(): Promise<string[]> {
   return new Promise((res, rej) => {
-    fs.readdir(process.env.MOVIES_DIR ?? `nothing`, (err, files) => {
+    return fs.readdir(process.env.MOVIES_DIR ?? `nothing`, (err, files) => {
       if (err) throw err;
       const newMovies = files.reduce((all: string[], current: string) => {
         const id = getId(current);
