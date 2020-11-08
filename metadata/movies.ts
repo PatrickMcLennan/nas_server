@@ -15,6 +15,7 @@ function getMovies(): Promise<string[]> {
       if (err) throw err;
       const newMovies = files.reduce((all: string[], current: string) => {
         const id = getId(current);
+        console.log(id);
         return files.includes(`.[${id}].json`) ? all : [id, ...all];
       }, []);
       return res(newMovies);
