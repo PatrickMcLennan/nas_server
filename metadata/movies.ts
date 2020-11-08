@@ -12,7 +12,7 @@ function getMovies(): Promise<string[]> {
       return res(
         files.filter((file) => {
           const id = file.split(`[`)[0].replace(`]`, ``).trim();
-          return files.includes(`.[${id}].json`);
+          return !files.includes(`.[${id}].json`);
         })
       );
     });
