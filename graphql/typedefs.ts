@@ -8,7 +8,7 @@ export const typeDefs = gql`
 
   type Query {
     books: [Book]
-    files: [String]
+    movies: [String]
     hello: String
   }
 `;
