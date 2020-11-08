@@ -13,6 +13,7 @@ fs.readdir(process.env.MOVIES_DIR ?? `nothing`, (err, files) => {
   if (err) throw err;
   const newMovies = files.reduce((all: string[], current: string) => {
     const id = getId(current);
+    console.log(id);
     return files.includes(`.[${id}].json`) || !id ? all : [id, ...all];
   }, []);
   return console.log(newMovies);
