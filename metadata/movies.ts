@@ -16,7 +16,6 @@ fs.readdir(process.env.MOVIES_DIR ?? `nothing`, (err, files) => {
     console.log(id);
     return files.includes(`.[${id}].json`) || !id ? all : [id, ...all];
   }, []);
-  return console.log(newMovies);
 });
 
 // axios
