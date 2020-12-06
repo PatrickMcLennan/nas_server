@@ -16,10 +16,9 @@ function getId(movie: string) {
 }
 
 function fileInfo(movie: string): { name: string; id: string; ext: string } {
-  console.log(movie.split(`[`));
   return {
-    name: movie.split(`[`)[0].trim(),
-    id: movie.split(`[`)[1].replace(`]`, ``).trim(),
+    name: movie.split(`[`)[0]?.trim(),
+    id: movie.split(`[`)[1]?.replace(`]`, ``)?.trim(),
     ext: path.extname(movie),
   };
 }
@@ -30,7 +29,6 @@ function getNewMovies() {
       if (err) throw err;
       const newMovies = files.reduce((all: string[], current: string) => {
         const { name, id, ext } = fileInfo(current);
-        console.log(name);
         return files.includes(`.[${id}].json`) || !id ? all : [id, ...all];
       }, []);
       return res(newMovies);
