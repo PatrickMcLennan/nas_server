@@ -30,6 +30,7 @@ function getNewMovies() {
       if (err) throw err;
       const newMovies = files.reduce((all: string[], current: string) => {
         const { name, id, ext } = fileInfo(current);
+        console.log(name);
         return files.includes(`.[${id}].json`) || !id ? all : [id, ...all];
       }, []);
       return res(newMovies);
