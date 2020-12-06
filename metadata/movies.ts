@@ -12,7 +12,7 @@ config();
  */
 
 function getId(movie: string) {
-  return movie.split(`[`)[0].replace(`]`, ``).trim();
+  return movie.split(`[`)[1].replace(`]`, ``).trim();
 }
 
 function getNewMovies() {
