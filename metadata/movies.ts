@@ -12,7 +12,7 @@ config();
  */
 
 function getId(movie: string) {
-  return movie.split(`[`)[1].replace(`]`, ``).trim();
+  return movie.split(`[`)[0].replace(`]`, ``).trim();
 }
 
 function getNewMovies() {
@@ -21,6 +21,7 @@ function getNewMovies() {
       if (err) throw err;
       const newMovies = files.reduce((all: string[], current: string) => {
         const id = getId(current);
+        console.log(id);
         return files.includes(`.[${id}].json`) || !id ? all : [id, ...all];
       }, []);
       return res(newMovies);
@@ -34,7 +35,7 @@ function makeJSON(id: string): Promise<void> {
       `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.TMDB_API_KEY}&language=en-US&append_to_response=videos`
     )
     .then(({ data }) => {
-      console.log(data);
+      //   console.log(data);
       //   const metadata = JSON.stringify({
       //     id: data.id,
       //     title: data.title,
@@ -57,8 +58,6 @@ function makeJSON(id: string): Promise<void> {
 
 async function main() {
   const newMovies = await getNewMovies();
-
-  console.log(newMovies);
 }
 
 main();
