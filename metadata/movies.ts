@@ -15,14 +15,21 @@ function getId(movie: string) {
   return movie.split(`[`)[0].replace(`]`, ``).trim();
 }
 
+function fileInfo(movie: string): { name: string; id: string; ext: string } {
+  return {
+    name: movie.split(`[`)[0].trim(),
+    id: movie.split(`[`)[1].replace(`]`, ``).trim(),
+    ext: path.extname(movie),
+  };
+}
+
 function getNewMovies() {
   return new Promise((res, rej) => {
     fs.readdir(process.env.MOVIES_DIR ?? `nothing`, (err, files) => {
       if (err) throw err;
       const newMovies = files.reduce((all: string[], current: string) => {
-        console.log(`[CURRENT]: ${current}`);
-        const id = getId(current);
-        console.log(id);
+        const { name, id, ext } = fileInfo(current);
+        console.log(name, id, ext);
         return files.includes(`.[${id}].json`) || !id ? all : [id, ...all];
       }, []);
       return res(newMovies);
