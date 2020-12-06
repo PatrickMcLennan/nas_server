@@ -11,10 +11,6 @@ config();
  * Scan the directory, pick up on new ID's, make an entry for each.
  */
 
-function getId(movie: string) {
-  return movie.split(`[`)[0].replace(`]`, ``).trim();
-}
-
 function fileInfo(movie: string): { name: string; id: string; ext: string } {
   return {
     name: movie.split(`[`)[0]?.trim(),
@@ -25,17 +21,29 @@ function fileInfo(movie: string): { name: string; id: string; ext: string } {
 
 function getNewMovies() {
   return new Promise((res, rej) => {
-    fs.readdir(process.env.MOVIES_DIR ?? `nothing`, (err, files) => {
-      if (err) throw err;
-      const newMovies = files.reduce((all: string[], current: string) => {
-        const { name, id, ext } = fileInfo(current);
-        console.log(name, id, ext);
-        return files.includes(`.[${id}].json`) || !id ? all : [id, ...all];
-      }, []);
-      return res(newMovies);
-    });
+    fs.readdir(process.env.MOVIES_DIR ?? `nothing`, (filesErr, files) =>
+      fs.readdir(process.env.MOVIES_JSON ?? `nothing`, (jsonErr, json) => {
+        if (filesErr || jsonErr) {
+          filesErr &&
+            console.error(`Problem reading ${process.env.MOVIES_DIR}`);
+          jsonErr &&
+            console.error(`Problem reading ${process.env.MOVIES_JSON}`);
+          rej();
+        }
+        const jsonMap = new Map();
+        json.forEach((jsonFile) => jsonMap.set(jsonFile, ``));
+        const newMovies = files.reduce((all: string[], current: string) => {
+          const { id } = fileInfo(current);
+          return jsonMap.has(`.[${id}].json`) || !id ? all : [id, ...all];
+        }, []);
+        return res(newMovies);
+      })
+    );
   });
 }
+
+// Temporary project approach -- Store metadata in JSON documents.
+// I should use Mongo for this, but soon I'll be moving to postgres anyways.
 
 function makeJSON(id: string): Promise<void> {
   return axios
@@ -66,6 +74,7 @@ function makeJSON(id: string): Promise<void> {
 
 async function main() {
   const newMovies = await getNewMovies();
+  console.log(newMovies);
 }
 
 main();
