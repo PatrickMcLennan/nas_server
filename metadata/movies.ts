@@ -31,7 +31,8 @@ function getNewMovies() {
           rej();
         }
         const jsonMap = new Map();
-        json?.forEach((jsonFile) => jsonMap.set(jsonFile, ``));
+        if (Array.isArray(json))
+          json.forEach((jsonFile) => jsonMap.set(jsonFile, ``));
         const newMovies = files.reduce((all: string[], current: string) => {
           const { id } = fileInfo(current);
           return jsonMap.has(`.[${id}].json`) || !id ? all : [id, ...all];
