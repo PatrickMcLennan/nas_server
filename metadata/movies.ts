@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 
-config();
+config({ path: path.resolve(__dirname, `../../.env`) });
 
 /**
  * A Cron script to keep whatever DB method I choose up to date with the files actually on the harddrive.
