@@ -18,7 +18,7 @@ function getId(movie: string) {
 function fileInfo(movie: string): { name: string; id: string; ext: string } {
   return {
     name: movie.split(`[`)[0]?.trim(),
-    id: movie.split(`[`)[1]?.replace(`]`, ``)?.trim(),
+    id: movie.split(`[`)[1]?.split(`].`)[0]?.trim(),
     ext: path.extname(movie),
   };
 }
