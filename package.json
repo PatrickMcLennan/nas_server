@@ -28,6 +28,7 @@
   },
   "scripts": {
     "typescript": "tsc -w",
+    "build": "tsc",
     "server": "nodemon ./dist",
     "dev": "concurrently 'yarn typescript' 'yarn server'"
   }
