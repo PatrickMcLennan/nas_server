@@ -54,37 +54,38 @@ function getNewMovies(): Promise<FileInfo[]> {
 // Temporary project approach -- Store metadata in JSON documents.
 // I should use Mongo for this, but soon I'll be moving to postgres anyways.
 
-function makeJSON({ id, name }: FileInfo): Promise<void> {
-  return axios
-    .get(
-      `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.TMDB_API_KEY}&language=en-US&append_to_response=videos`
-    )
-    .then(({ data }) => {
-      const metadata = JSON.stringify({
-        id: data.id,
-        title: data.title,
-        backdrop: `${process.env.TMDB_IMAGES}${data.backdrop_path}`,
-        overview: data.overview,
-        path: `${process.env.MOVIES_DIR}`,
-        poster: `${process.env.TMDB_IMAGES}${data.poster_path}`,
-        genres: data.genres.map(({ name }: { name: string }) => name),
-        relase: new Date(data.release_date).getFullYear(),
-        trailers: data.videos,
-      });
-      return fs.writeFile(
-        `${path.resolve(process.env.MOVIES_JSON ?? `./`)}/.${id}.json`,
-        metadata,
-        () =>
-          console.log(
-            `${name} is done => ${process.env.MOVIES_JSON}/.${id}.json`
-          )
-      );
-    })
-    .catch(console.error);
+function makeJSON({ id, name }: FileInfo): Promise<string | Error> {
+  return new Promise((res, rej) =>
+    axios
+      .get(
+        `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.TMDB_API_KEY}&language=en-US&append_to_response=videos`
+      )
+      .then(({ data }) => {
+        const metadata = JSON.stringify({
+          id: data.id,
+          title: data.title,
+          backdrop: `${process.env.TMDB_IMAGES}${data.backdrop_path}`,
+          overview: data.overview,
+          path: `${process.env.MOVIES_DIR}`,
+          poster: `${process.env.TMDB_IMAGES}${data.poster_path}`,
+          genres: data.genres.map(({ name }: { name: string }) => name),
+          relase: new Date(data.release_date).getFullYear(),
+          trailers: data.videos,
+        });
+        return fs.writeFile(
+          `${path.resolve(process.env.MOVIES_JSON ?? `./`)}/.${id}.json`,
+          metadata,
+          () => res(`${name} is done => ${process.env.MOVIES_JSON}/.${id}.json`)
+        );
+      })
+      .catch((error) => rej(error))
+  );
 }
 
 getNewMovies()
   .then((newMovies) =>
     Promise.all(newMovies.map((newMovie) => makeJSON(newMovie)))
+      .then(console.log)
+      .catch(console.error)
   )
   .catch(console.error);
