@@ -7,7 +7,7 @@ export const typeDefs = gql`
   }
 
   type Movie {
-    id: Id!
+    id: ID!
     title: String!
     backdrop: String
     overview: String
