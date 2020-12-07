@@ -1,13 +1,22 @@
+import 'reflect-metadata';
 import express from 'express';
-import { typeDefs } from './graphql/typedefs';
-import { resolvers } from './graphql/resolvers';
 import { ApolloServer } from 'apollo-server-express';
+import { buildSchema } from 'type-graphql';
+import { MovieResolver } from './resolvers/movie.resolver';
+import { config } from 'dotenv';
+import path from 'path';
 
-const port = 4000;
+config({ path: path.resolve(__dirname, `../.env`) });
 
-const app = express();
-const server = new ApolloServer({ typeDefs, resolvers });
+const PORT = process.env.PORT;
 
-server.applyMiddleware({ app, path: `/api` });
-// Start the server
-app.listen(port, () => console.log(`Running on Port ${port}`));
+buildSchema({ resolvers: [MovieResolver] })
+  .then((schema) => {
+    const app = express();
+    const server = new ApolloServer({ schema, playground: true });
+    server.applyMiddleware({ app, path: `/graphql` });
+    return app.listen(PORT, () => console.log(`Running on Port ${PORT}`));
+  })
+  .catch((error) =>
+    console.error(`There was error building the schema: ${error}`)
+  );
