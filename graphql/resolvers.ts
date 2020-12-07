@@ -19,7 +19,11 @@ export const resolvers = {
     hello: () => `hellofdfd`,
     movies: () => {
       const jsonFiles = fs.readdirSync(process.env.MOVIES_JSON ?? `NULL`);
-      return Promise.all(jsonFiles.map(getJSONData)).catch(console.error);
+      return Promise.all(
+        jsonFiles.map((file) =>
+          getJSONData(path.resolve(process.env.MOVIES_JSON ?? `NULL`, file))
+        )
+      ).catch(console.error);
     },
   },
 };
