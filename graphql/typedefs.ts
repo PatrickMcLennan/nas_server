@@ -14,8 +14,8 @@ export const typeDefs = gql`
     path: String!
     poster: String
     genres: [String]
-    release: Date
-    trailers: [Object]
+    release: String
+    trailers: [Book]
   }
 
   type Query {
