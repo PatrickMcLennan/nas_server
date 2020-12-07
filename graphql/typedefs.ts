@@ -12,11 +12,15 @@ export const typeDefs = gql`
     backdrop: String
     overview: String
     path: String!
+    poster: String
+    genres: [String]
+    release: Date
+    trailers: [Object]
   }
 
   type Query {
     books: [Book]
-    movies: [String]
+    movies: [Movie]
     hello: String
   }
 `;
