@@ -6,6 +6,14 @@ export const typeDefs = gql`
     author: String
   }
 
+  type Movie {
+    id: Id!
+    title: String!
+    backdrop: String
+    overview: String
+    path: String!
+  }
+
   type Query {
     books: [Book]
     movies: [String]

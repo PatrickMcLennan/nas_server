@@ -54,7 +54,7 @@ function getNewMovies(): Promise<FileInfo[]> {
 // Temporary project approach -- Store metadata in JSON documents.
 // I should use Mongo for this, but soon I'll be moving to postgres anyways.
 
-function makeJSON({ id, name }: FileInfo): Promise<string | Error> {
+function makeJSON({ id, name, ext }: FileInfo): Promise<string | Error> {
   return new Promise((res, rej) =>
     axios
       .get(
@@ -66,10 +66,10 @@ function makeJSON({ id, name }: FileInfo): Promise<string | Error> {
           title: data.title,
           backdrop: `${process.env.TMDB_IMAGES}${data.backdrop_path}`,
           overview: data.overview,
-          path: `${process.env.MOVIES_DIR}`,
+          path: `${process.env.MOVIES_DIR}/${name} [${id}].${ext}`,
           poster: `${process.env.TMDB_IMAGES}${data.poster_path}`,
           genres: data.genres.map(({ name }: { name: string }) => name),
-          relase: new Date(data.release_date).getFullYear(),
+          release: new Date(data.release_date).getFullYear(),
           trailers: data.videos,
         });
         return fs.writeFile(
