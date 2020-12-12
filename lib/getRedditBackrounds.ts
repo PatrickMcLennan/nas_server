@@ -26,7 +26,6 @@ type ScrapedResult = {
 };
 
 const URL = `https://old.reddit.com/r/widescreenwallpaper`;
-const SLACK_CHANNEL = `backgrounds`;
 
 const Slackbot = new WebClient(process.env.BACKGROUNDS_SLACK_BOT);
 
@@ -72,11 +71,8 @@ async function getNewWallpapers(): Promise<ScrapedResult[]> {
 
 function getCurrentWallpapers(): Promise<Map<string, null>> {
   return new Promise((res, rej) =>
-    fs.readdir(
-      //   process.env.BACKGROUNDS_DIR ??
-      path.resolve(__dirname, `./`),
-      (err, files) =>
-        err ? rej(err) : res(new Map(files.map((file) => [file, null])))
+    fs.readdir(process.env.BACKGROUNDS_DIR ?? `NULL`, (err, files) =>
+      err ? rej(err) : res(new Map(files.map((file) => [file, null])))
     )
   );
 }
@@ -88,8 +84,7 @@ function downloadImage({
 }: ScrapedResult): Promise<{ name: string; success: boolean }> {
   return new Promise((res) => {
     const dest = path.join(
-      // process.env.BACKGROUNDS_DIR ?? NULL
-      path.resolve(),
+      process.env.BACKGROUNDS_DIR ?? `NULL`,
       `${name}.${ext}`
     );
     const file = fs.createWriteStream(dest);
@@ -109,7 +104,13 @@ function downloadImage({
 
 function slackPost(bot: WebClient, text: string) {
   return new Promise((res) =>
-    bot.chat.postMessage({ channel: `backgrounds`, text }).catch(console.error)
+    bot.chat
+      .postMessage({ channel: `backgrounds`, text })
+      .then(res)
+      .catch((err) => {
+        console.error(err);
+        res();
+      })
   );
 }
 
