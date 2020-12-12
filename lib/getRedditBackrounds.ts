@@ -1,11 +1,11 @@
 import puppeteer from 'puppeteer';
 import { config } from 'dotenv';
 import fs from 'fs';
-import Slackbot from 'slackbots';
 import path from 'path';
 import https from 'https';
 import { timeStamp } from './logger';
 import { ImageExtensions } from '../types/images.types';
+import { WebClient } from '@slack/web-api';
 
 /**
  * Scrape Reddit for new Ultrawide wallpapers, download new posts
@@ -27,6 +27,8 @@ type ScrapedResult = {
 
 const URL = `https://old.reddit.com/r/widescreenwallpaper`;
 const SLACK_CHANNEL = `backgrounds`;
+
+const Slackbot = new WebClient(process.env.BACKGROUNDS_SLACK_BOT);
 
 async function getNewWallpapers(): Promise<ScrapedResult[]> {
   const browser = await puppeteer.launch();
@@ -105,23 +107,10 @@ function downloadImage({
   });
 }
 
-function slackBot() {
-  return new Promise((res, rej) => {
-    const bot = new Slackbot({
-      token: process.env.BACKGROUNDS_SLACK_BOT ?? `NULL`,
-      name: `backgrounds-logger`,
-    });
-
-    bot.on(`start`, () =>
-      bot.postMessageToChannel(
-        SLACK_CHANNEL,
-        `${timeStamp()} -- Starting to scrape ${URL}`
-      )
-    );
-
-    bot.on(`error`, console.error);
-    return bot ? res(bot) : rej(`There was an error making the bot`);
-  });
+function slackPost(bot: WebClient, text: string) {
+  return new Promise((res) =>
+    bot.chat.postMessage({ channel: `backgrounds`, text }).catch(console.error)
+  );
 }
 
 Promise.all([getNewWallpapers(), getCurrentWallpapers()])
@@ -130,17 +119,17 @@ Promise.all([getNewWallpapers(), getCurrentWallpapers()])
       ({ name, ext }) =>
         !current.has(name) && Object.keys(ImageExtensions).includes(ext)
     );
-    return Promise.all([slackBot(), ...downloads.map(downloadImage)]);
+    return Promise.all(downloads.map(downloadImage));
   })
-  .then(([bot, ...downloads]) =>
-    downloads.forEach((download) =>
-      bot.postMessageToChannel(
-        SLACK_CHANNEL,
-        `${timeStamp()} -- ${
-          download.success
-            ? `${name} was downloaded`
-            : `There was an issue downloading ${name}`
-        }`
+  .then((newDownloads) =>
+    Promise.all(
+      newDownloads.map(({ name, success }) =>
+        slackPost(
+          Slackbot,
+          `${timeStamp()} -- ${
+            success ? `${name} was downloaded` : `${name} was not downloaded`
+          }`
+        )
       )
     )
   )
