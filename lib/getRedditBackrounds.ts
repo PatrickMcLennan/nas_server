@@ -12,7 +12,12 @@ import { ImageExtensions } from '../types/images.types';
  * that aren't ads or NSFW.  Post the results to my slack sever.
  */
 
-config({ path: `../../.env` });
+/**
+ * TODO:
+ *      - Add existing "ignore" list ability
+ */
+
+config({ path: path.resolve(__dirname, `../../.env`) });
 
 type ScrapedResult = {
   url: string;
