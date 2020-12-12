@@ -8,6 +8,6 @@ export class Base {
   @Field()
   createdAt!: Date;
 
-  @Field({ onUpdate: () => new Date() })
+  @Field({ atUpdate: () => new Date() })
   updatedAt!: Date;
 }

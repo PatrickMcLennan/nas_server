@@ -61,6 +61,7 @@ function makeJSON({ id, name, ext }: FileInfo): Promise<string | Error> {
         `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.TMDB_API_KEY}&language=en-US&append_to_response=videos`
       )
       .then(({ data }) => {
+        // TODO: Ping the postgres API with this when it's ready instead
         const metadata = JSON.stringify({
           id: data.id,
           title: data.title,
@@ -69,7 +70,7 @@ function makeJSON({ id, name, ext }: FileInfo): Promise<string | Error> {
           path: `${process.env.MOVIES_DIR}/${name} [${id}].${ext}`,
           poster: `${process.env.TMDB_IMAGES}${data.poster_path}`,
           genres: data.genres.map(({ name }: { name: string }) => name),
-          release: new Date(data.release_date).getFullYear(),
+          releaseDate: new Date(data.release_date).getFullYear(),
           trailers: data.videos,
         });
         return fs.writeFile(

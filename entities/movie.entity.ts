@@ -1,10 +1,8 @@
-import { Field, ID, ObjectType } from 'type-graphql';
+import { Field, ObjectType } from 'type-graphql';
+import { Base } from './base.entity';
 
 @ObjectType({ description: `Movies` })
-export class Movie {
-  @Field(() => ID)
-  id!: string;
-
+export class Movie extends Base {
   @Field()
   title!: string;
 
@@ -17,14 +15,14 @@ export class Movie {
   @Field()
   path!: string;
 
-  @Field()
+  @Field({ nullable: true })
   poster!: string;
 
   @Field(() => [String])
   genres!: string[];
 
   @Field()
-  release!: string;
+  releaseDate!: string;
 
   //   @Field()
   //   trailers!: Record<string, unknown>[];
