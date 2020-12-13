@@ -51,7 +51,7 @@ async function getEpisodes(): Promise<[string, Map<string, null>] | void> {
   if (!seasonsMap.has(seasonId))
     return errorService(
       Error.Exit,
-      `\n${timeStamp()} -- getEpisodeId Error:\n ${showPath} does not have a Season directory within it with the ID of ${showId}`,
+      `\n${timeStamp()} -- getEpisodeId Error:\n ${showPath} does not have a Season directory within it with the ID of ${seasonId}`,
       slackConfig
     );
 
