@@ -27,7 +27,7 @@ export function isDir(file: string): Promise<boolean> {
     fs.lstat(file, (err, stats) => {
       if (err)
         errorService(
-          Error.Medium,
+          Error.Warn,
           `${timeStamp()} -- isDir Error:\n ${file} couldn't be read within the isDir function`
         );
       return res(stats.isDirectory() ?? false);
@@ -39,19 +39,11 @@ export function errorService(
   errLevel: Error,
   message: string,
   slackbot?: SlackbotDTO
-): Promise<WebAPICallResult | void> | void {
+): Promise<void> | void {
   switch (errLevel) {
-    case Error.Low:
+    case Error.Warn:
       return console.error(message);
-    case Error.Medium:
-      console.error(message);
-      return slackbot?.bot.chat
-        .postMessage({
-          channel: slackbot.channel,
-          text: message,
-        })
-        .catch(console.error);
-    case Error.High:
+    case Error.Exit:
       console.error(message);
       return slackbot?.bot.chat
         .postMessage({

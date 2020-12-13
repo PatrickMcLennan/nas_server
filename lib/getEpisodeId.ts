@@ -21,17 +21,17 @@ const slackConfig = { bot: Slackbot, channel: SlackChannels.Tv };
 
 if (!showId || !seasonId)
   errorService(
-    Error.High,
+    Error.Exit,
     `\n${timeStamp()} -- getEpisodeId Error:\n getEpisodeId was trying to be run without a Show ID and/or Season ID.  The files in these directories have to be formatted properly with their ID's in the name.\n`,
     slackConfig
   );
 
-async function main() {
+async function getEpisodes(): Promise<[string, Map<string, null>] | void> {
   const showsMap = await directoryMap(process.env.TV_DIR ?? `NULL`);
 
   if (!showsMap.has(showId))
     return errorService(
-      Error.High,
+      Error.Exit,
       `\n${timeStamp()} -- getEpisodeId Error"\n The show ID ${showId} was not found within ${
         process.env.TV_DIR
       }`,
@@ -43,7 +43,7 @@ async function main() {
 
   if (!showPath || !showIsDir)
     return errorService(
-      Error.High,
+      Error.Exit,
       `\n${timeStamp()} -- getEpisodeId Error:\n ${showPath} is not a directory within ${
         process.env.TV_DIR
       }`,
@@ -54,8 +54,9 @@ async function main() {
 
   if (!seasonsMap.has(seasonId))
     return errorService(
-      Error.High,
-      `\n${timeStamp()} -- getEpisodeId Error:\n ${showPath} does not have a Season directory within it with the ID of ${showId}`
+      Error.Exit,
+      `\n${timeStamp()} -- getEpisodeId Error:\n ${showPath} does not have a Season directory within it with the ID of ${showId}`,
+      slackConfig
     );
 
   const seasonPath = seasonsMap.get(showId);
@@ -63,7 +64,7 @@ async function main() {
 
   if (!seasonPath || !seasonIsDir)
     return errorService(
-      Error.High,
+      Error.Exit,
       `\n${timeStamp()} -- getEpisodeId Error:\n ${showPath} is not a directory within ${
         process.env.TV_DIR
       }`,
@@ -72,7 +73,11 @@ async function main() {
 
   const episodes = await filesMap(seasonPath);
 
-  console.log(episodes);
+  return [seasonPath, episodes];
 }
 
-main();
+getEpisodes()
+  .then((something) => {
+    console.log(something);
+  })
+  .catch(console.error);
