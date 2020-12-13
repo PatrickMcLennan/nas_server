@@ -4,8 +4,9 @@ import fs from 'fs';
 import path from 'path';
 import https from 'https';
 import { timeStamp } from './logger';
-import { ImageExtensions } from '../types/images.types';
+import { ImageDTO, ImageExtensions } from '../types/images.types';
 import { WebClient } from '@slack/web-api';
+import { filesMap } from './shared';
 
 /**
  * Scrape Reddit for new Ultrawide wallpapers, download new posts
@@ -14,22 +15,17 @@ import { WebClient } from '@slack/web-api';
 
 /**
  * TODO:
- *      - Add existing "ignore" list ability
+ *      - Add existing "ignore" list ability.
+ *      - Yikes -- looks like chrome doesn't run on Synology NAS's OS.  puppeteer currently not working.
  */
 
 config({ path: path.resolve(__dirname, `../../.env`) });
-
-type ScrapedResult = {
-  url: string;
-  name: string;
-  ext: string;
-};
 
 const URL = `https://old.reddit.com/r/widescreenwallpaper`;
 
 const Slackbot = new WebClient(process.env.BACKGROUNDS_SLACK_BOT);
 
-async function getNewWallpapers(): Promise<ScrapedResult[]> {
+async function getNewWallpapers(): Promise<ImageDTO[]> {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(URL, { waitUntil: `networkidle0` });
@@ -67,19 +63,10 @@ async function getNewWallpapers(): Promise<ScrapedResult[]> {
   return results;
 }
 
-function getCurrentWallpapers(): Promise<Map<string, null>> {
-  return new Promise((res, rej) =>
-    fs.readdir(process.env.BACKGROUNDS_DIR ?? `NULL`, (err, files) =>
-      err ? rej(err) : res(new Map(files.map((file) => [file, null])))
-    )
-  );
-}
-
-function downloadImage({
-  url,
-  name,
-  ext,
-}: ScrapedResult): Promise<{ name: string; success: boolean }> {
+function downloadImage(
+  result: ImageDTO
+): Promise<{ name: string; success: boolean }> {
+  const { url, name, ext } = result;
   return new Promise((res) => {
     const dest = path.join(
       process.env.BACKGROUNDS_DIR ?? `NULL`,
@@ -112,7 +99,10 @@ function slackPost(bot: WebClient, text: string) {
   );
 }
 
-Promise.all([getNewWallpapers(), getCurrentWallpapers()])
+Promise.all([
+  getNewWallpapers(),
+  filesMap(process.env.BACKGROUNDS_DIR ?? `NULL`),
+])
   .then(([newResults, current]) => {
     const downloads = newResults.filter(
       ({ name, ext }) =>
