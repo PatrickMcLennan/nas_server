@@ -56,6 +56,7 @@ export function errorService(
 }
 
 export function getFileId(file: string): number {
+  if (!file.includes(`[`)) return -1;
   const stringSplit = file.split(`[`);
   const id = stringSplit[1]?.split(`]`)[0];
   return Number(id);
