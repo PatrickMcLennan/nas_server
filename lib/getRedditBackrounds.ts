@@ -23,7 +23,7 @@ config({ path: path.resolve(__dirname, `../../.env`) });
 
 const URL = `https://old.reddit.com/r/widescreenwallpaper`;
 
-const Slackbot = new WebClient(process.env.BACKGROUNDS_SLACK_BOT);
+const Slackbot = new WebClient(process.env.LOGGER_SLACK_BOT);
 
 async function getNewWallpapers(): Promise<ImageDTO[]> {
   const browser = await puppeteer.launch();

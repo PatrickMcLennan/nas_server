@@ -16,7 +16,7 @@ import path from 'path';
 config({ path: path.resolve(__dirname, `../../.env`) });
 
 const [showId, seasonId] = [Number(argv[2]), Number(argv[3])];
-const Slackbot = new WebClient(process.env.BACKGROUNDS_SLACK_BOT);
+const Slackbot = new WebClient(process.env.LOGGER_SLACK_BOT);
 const slackConfig = { bot: Slackbot, channel: SlackChannels.Tv };
 
 if (!showId || !seasonId)

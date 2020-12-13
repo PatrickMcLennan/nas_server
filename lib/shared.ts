@@ -48,7 +48,7 @@ export function errorService(
       return slackbot?.bot.chat
         .postMessage({
           channel: slackbot.channel,
-          text: message,
+          text: message.toString(),
         })
         .then(() => process.exit(1))
         .catch(console.error);
