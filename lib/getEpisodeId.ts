@@ -31,7 +31,10 @@ async function getEpisodes(): Promise<[string, Map<string, null>] | void> {
       slackConfig
     );
 
-  const showPath = showsMap.get(showId);
+  const showPath = path.join(
+    process.env.TV_DIR ?? `NULL`,
+    showsMap.get(showId) ?? `NULL`
+  );
   const showIsDir = await isDir(showPath ?? ``);
 
   if (!showPath || !showIsDir)
@@ -52,7 +55,7 @@ async function getEpisodes(): Promise<[string, Map<string, null>] | void> {
       slackConfig
     );
 
-  const seasonPath = seasonsMap.get(showId);
+  const seasonPath = path.join(showPath, seasonsMap.get(showId) ?? `NULL`);
   const seasonIsDir = await isDir(seasonPath ?? ``);
 
   if (!seasonPath || !seasonIsDir)
