@@ -55,6 +55,8 @@ async function getEpisodes(): Promise<[string, Map<string, null>] | void> {
       slackConfig
     );
 
+  console.log(showId, seasonId);
+
   const seasonPath = path.join(showPath, seasonsMap.get(showId) ?? `NULL`);
   const seasonIsDir = await isDir(seasonPath ?? ``);
 
