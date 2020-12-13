@@ -36,33 +36,31 @@ async function getNewWallpapers(): Promise<ScrapedResult[]> {
 
   const results = await page.evaluate(() => {
     const allPosts = Array.from(document.querySelectorAll(`.thing`));
-    const newPosts = allPosts.filter(
+    const targetPosts = allPosts.filter(
       (post) =>
         post.getAttribute(`data-promoted`)?.trim().toLowerCase() !== `true` &&
         post.getAttribute(`data-nsfw`)?.trim().toLowerCase() !== `true`
     );
 
-    return newPosts.map((post) => {
-      return {
-        url: post.getAttribute(`data-url`) ?? `NULL`,
-        name:
-          post
-            .querySelector(`[data-event-action="title"]`)
-            ?.textContent?.trim()
-            .toLowerCase()
-            .replace(/ /g, `-`)
-            .replace(/\*/g, `-`)
-            .replace(/\//g, `-`)
-            .replace(/\[/g, `-`)
-            .replace(/\]/g, `-`)
-            .replace(/\|/g, `-`)
-            .replace(/@/g, `-`) ?? `NULL`,
-        ext:
-          post.getAttribute(`data-url`)?.split(`.`)[
-            post.getAttribute(`data-url`)?.split(`.`).length - 1
-          ] ?? `NULL`,
-      };
-    });
+    return targetPosts.map((post) => ({
+      url: post.getAttribute(`data-url`) ?? `NULL`,
+      name:
+        post
+          .querySelector(`[data-event-action="title"]`)
+          ?.textContent?.trim()
+          .toLowerCase()
+          .replace(/ /g, `-`)
+          .replace(/\*/g, `-`)
+          .replace(/\//g, `-`)
+          .replace(/\[/g, `-`)
+          .replace(/\]/g, `-`)
+          .replace(/\|/g, `-`)
+          .replace(/@/g, `-`) ?? `NULL`,
+      ext:
+        post.getAttribute(`data-url`)?.split(`.`)[
+          post.getAttribute(`data-url`)?.split(`.`).length - 1
+        ] ?? `NULL`,
+    }));
   });
 
   await browser.close();
@@ -134,4 +132,9 @@ Promise.all([getNewWallpapers(), getCurrentWallpapers()])
       )
     )
   )
-  .catch(console.error);
+  .catch((err) =>
+    slackPost(
+      Slackbot,
+      `${timeStamp()} -- Error running getRedditBackgrounds:\n${err}`
+    )
+  );
