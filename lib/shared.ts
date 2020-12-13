@@ -1,8 +1,9 @@
-import { WebAPICallResult } from '@slack/web-api';
 import { timeStamp } from 'console';
+import axios from 'axios';
 import fs from 'fs';
 import { Error } from '../types/errors.types';
 import { SlackbotDTO } from '../types/slack.types';
+import { sortEpisodeDTO } from '../types/tv.types';
 
 export function filesMap(dir: string): Promise<Map<string, null>> {
   return new Promise((res, rej) =>
@@ -60,4 +61,26 @@ export function getFileId(file: string): number {
   const stringSplit = file.split(`[`);
   const id = stringSplit[1]?.split(`]`)[0];
   return Number(id);
+}
+
+export function sortEpisodes(episodes: string[]): sortEpisodeDTO[] {
+  return episodes
+    .map((episode) => ({
+      episode,
+      count:
+        Number(episode.split(`E`)[0].replace(/S/g, ``)) * 10 +
+        Number(episode.split(`E`)[1]),
+    }))
+    .sort((a, b) => (a.count > b.count ? 1 : -1));
+}
+
+export function getSeasonInfo(
+  showId: number,
+  seasonId: number
+): Promise<Record<string, unknown>> {
+  return axios
+    .get(
+      `https://api.themoviedb.org/3/tv/${showId}/season/${seasonId}?api_key=${process.env.TMDB_API_KEY}`
+    )
+    .then(({ data }) => data);
 }

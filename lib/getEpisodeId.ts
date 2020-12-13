@@ -1,7 +1,15 @@
+import axios from 'axios';
 import { argv } from 'process';
 import { config } from 'dotenv';
 import { WebClient } from '@slack/web-api';
-import { directoryMap, errorService, filesMap, isDir } from './shared';
+import {
+  directoryMap,
+  errorService,
+  filesMap,
+  getSeasonInfo,
+  isDir,
+  sortEpisodes,
+} from './shared';
 import { Error } from '../types/errors.types';
 import { timeStamp } from './logger';
 import { SlackChannels } from '../types/slack.types';
@@ -55,10 +63,6 @@ async function getEpisodes(): Promise<[string, Map<string, null>] | void> {
       slackConfig
     );
 
-  console.log(seasonsMap);
-  console.log(showPath);
-  console.log(showId, seasonId);
-
   const seasonPath = path.join(showPath, seasonsMap.get(seasonId) ?? `NULL`);
   const seasonIsDir = await isDir(seasonPath ?? ``);
 
@@ -71,10 +75,7 @@ async function getEpisodes(): Promise<[string, Map<string, null>] | void> {
       slackConfig
     );
 
-  console.log(seasonPath);
-
   const episodes = await filesMap(seasonPath);
-
   return [seasonPath, episodes];
 }
 
@@ -85,8 +86,11 @@ if (!showId || !seasonId)
     slackConfig
   );
 else
-  getEpisodes()
-    .then((something) => {
-      console.log(something);
+  Promise.all([getEpisodes(), getSeasonInfo(showId, seasonId)])
+    .then(([episodes, apiData]) => {
+      if (!episodes || !apiData) return;
+      const sorted = sortEpisodes(Object.keys(episodes));
+
+      console.log(sorted, apiData);
     })
     .catch(console.error);
