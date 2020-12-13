@@ -19,13 +19,6 @@ const [showId, seasonId] = [Number(argv[2]), Number(argv[3])];
 const Slackbot = new WebClient(process.env.LOGGER_SLACK_BOT);
 const slackConfig = { bot: Slackbot, channel: SlackChannels.Tv };
 
-if (!showId || !seasonId)
-  errorService(
-    Error.Exit,
-    `\n${timeStamp()} -- getEpisodeId Error:\n getEpisodeId was trying to be run without a Show ID and/or Season ID.  The files in these directories have to be formatted properly with their ID's in the name.\n`,
-    slackConfig
-  );
-
 async function getEpisodes(): Promise<[string, Map<string, null>] | void> {
   const showsMap = await directoryMap(process.env.TV_DIR ?? `NULL`);
 
@@ -76,8 +69,15 @@ async function getEpisodes(): Promise<[string, Map<string, null>] | void> {
   return [seasonPath, episodes];
 }
 
-getEpisodes()
-  .then((something) => {
-    console.log(something);
-  })
-  .catch(console.error);
+if (!showId || !seasonId)
+  errorService(
+    Error.Exit,
+    `\n${timeStamp()} -- getEpisodeId Error:\n getEpisodeId was trying to be run without a Show ID and/or Season ID.  The files in these directories have to be formatted properly with their ID's in the name.\n`,
+    slackConfig
+  );
+else
+  getEpisodes()
+    .then((something) => {
+      console.log(something);
+    })
+    .catch(console.error);
