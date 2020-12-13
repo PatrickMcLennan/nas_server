@@ -59,7 +59,7 @@ async function getEpisodes(): Promise<[string, Map<string, null>] | void> {
   console.log(showPath);
   console.log(showId, seasonId);
 
-  const seasonPath = path.join(showPath, seasonsMap.get(showId) ?? `NULL`);
+  const seasonPath = path.join(showPath, seasonsMap.get(showId));
   const seasonIsDir = await isDir(seasonPath ?? ``);
 
   if (!seasonPath || !seasonIsDir)
