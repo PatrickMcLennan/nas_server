@@ -79,7 +79,7 @@ export function getSeasonInfo(
 ): Promise<Record<string, unknown>> {
   return axios
     .get(
-      `https://api.themoviedb.org/3/find/${seasonId}?api_key=${process.env.TMDB_API_KEY}`
+      `https://api.themoviedb.org/3/tv/${seasonId}?api_key=${process.env.TMDB_API_KEY}`
     )
     .then(({ data }) => data);
 }
