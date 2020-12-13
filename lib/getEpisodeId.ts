@@ -86,7 +86,7 @@ if (!showId || !seasonId)
     slackConfig
   );
 else
-  Promise.all([getEpisodes(), getSeasonInfo(showId, seasonId)])
+  Promise.all([getEpisodes(), getSeasonInfo(seasonId)])
     .then(([episodes, apiData]) => {
       if (!episodes || !apiData) return;
       const sorted = sortEpisodes(Object.keys(episodes));
