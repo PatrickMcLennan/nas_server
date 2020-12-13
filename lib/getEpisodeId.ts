@@ -87,10 +87,10 @@ if (!showId || !seasonId)
   );
 else
   Promise.all([getEpisodes(), getSeasonInfo(seasonId)])
-    .then(([episodes, apiData]) => {
+    .then(([[seasonPath, episodes], apiData]) => {
       if (!episodes || !apiData) return;
       const sorted = sortEpisodes(Object.keys(episodes));
 
-      console.log(sorted, apiData);
+      console.log(seasonPath, sorted, apiData);
     })
     .catch(console.error);
