@@ -56,6 +56,7 @@ async function getEpisodes(): Promise<[string, Map<string, null>] | void> {
     );
 
   console.log(seasonsMap);
+  console.log(showPath);
   console.log(showId, seasonId);
 
   const seasonPath = path.join(showPath, seasonsMap.get(showId) ?? `NULL`);
