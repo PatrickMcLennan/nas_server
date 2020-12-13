@@ -71,6 +71,8 @@ async function getEpisodes(): Promise<[string, Map<string, null>] | void> {
       slackConfig
     );
 
+    console.log(seasonPath)
+
   const episodes = await filesMap(seasonPath);
 
   return [seasonPath, episodes];
@@ -85,6 +87,6 @@ if (!showId || !seasonId)
 else
   getEpisodes()
     .then((something) => {
-      console.log(something);
+      const ids = 
     })
     .catch(console.error);
