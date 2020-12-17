@@ -3,7 +3,7 @@ import { Image } from '../entities/image.entity';
 import fs from 'fs';
 import { config } from 'dotenv';
 
-config();
+config({ path: `../../.env` });
 @Resolver(Image)
 export class ImageResolver {
   @Query(() => [Image])

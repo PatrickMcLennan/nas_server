@@ -3,7 +3,7 @@ import { Movie } from '../entities/movie.entity';
 import fs from 'fs';
 import { config } from 'dotenv';
 
-config();
+config({ path: `../../.env` });
 @Resolver(Movie)
 export class MovieResolver {
   @Query(() => [Movie])
