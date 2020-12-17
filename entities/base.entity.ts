@@ -2,12 +2,12 @@ import { Field, ID, ObjectType } from 'type-graphql';
 
 @ObjectType()
 export class Base {
-  @Field(() => ID)
-  id!: string;
+  @Field(() => ID, { nullable: true })
+  id: string;
 
   @Field()
-  createdAt!: Date;
+  createdAt: Date;
 
   @Field()
-  updatedAt!: Date;
+  updatedAt: Date;
 }

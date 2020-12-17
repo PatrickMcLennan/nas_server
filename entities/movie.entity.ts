@@ -4,25 +4,25 @@ import { Base } from './base.entity';
 @ObjectType({ description: `Movies` })
 export class Movie extends Base {
   @Field()
-  title!: string;
+  title: string;
 
   @Field({ nullable: true })
-  backdrop!: string;
+  backdrop: string;
 
   @Field({ nullable: true })
-  overview!: string;
+  overview: string;
 
   @Field()
-  path!: string;
+  path: string;
 
   @Field({ nullable: true })
-  poster!: string;
+  poster: string;
 
   @Field(() => [String])
-  genres!: string[];
+  genres: string[];
 
   @Field()
-  releaseDate!: string;
+  releaseDate: string;
 
   //   @Field()
   //   trailers!: Record<string, unknown>[];

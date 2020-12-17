@@ -10,6 +10,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": ["es2018", "esnext.asynciterable", "dom"],
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "strictPropertyInitialization": false
   }
 }
