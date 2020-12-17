@@ -1,13 +1,17 @@
 import { Query, Resolver } from 'type-graphql';
 import { Movie } from '../entities/movie.entity';
+import fs from 'fs';
+import { config } from 'dotenv';
 
+config();
 @Resolver(Movie)
 export class MovieResolver {
-  // TODO: Create pg MovieService here
-  constructor(private movieService) {}
-
   @Query(() => [Movie])
-  async movies(): Promise<Movie[]> {
-    return this.movieService.findAll();
+  async movies(): Promise<Movie['title'][]> {
+    return new Promise((res, rej) =>
+      fs.readdir(process.env.MOVIES_DIR ?? `NULL`, (err, files) =>
+        err ? rej(err) : res(files)
+      )
+    );
   }
 }
