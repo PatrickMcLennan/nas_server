@@ -8,10 +8,7 @@ config();
 export class ImageResolver {
   @Query(() => [Image])
   async images(): Promise<Image['name'][]> {
-    return new Promise((res, rej) =>
-      fs.readdir(process.env.BACKGROUNDS_DIR ?? `NULL`, (err, files) =>
-        err ? rej(err) : res(files)
-      )
-    );
+    const images = fs.readdirSync(process.env.BACKGROUNDS_DIR ?? `NULL`);
+    return images ?? `NULL`;
   }
 }
