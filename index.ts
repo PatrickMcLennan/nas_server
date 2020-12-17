@@ -5,12 +5,13 @@ import { buildSchema } from 'type-graphql';
 import { MovieResolver } from './resolvers/movie.resolver';
 import { config } from 'dotenv';
 import path from 'path';
+import { ImageResolver } from './resolvers/images.resolver';
 
 config({ path: path.resolve(__dirname, `../.env`) });
 
 const PORT = process.env.PORT;
 
-buildSchema({ resolvers: [MovieResolver] })
+buildSchema({ resolvers: [MovieResolver, ImageResolver] })
   .then((schema) => {
     const app = express();
     const server = new ApolloServer({ schema, playground: true });
