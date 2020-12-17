@@ -1,4 +1,4 @@
-export enum ImageExtensions {
+export enum ImageExtension {
   png = `png`,
   jpg = `jpg`,
   jpeg = `jpeg`,
@@ -7,5 +7,5 @@ export enum ImageExtensions {
 export type ImageDTO = {
   url: string;
   name: string;
-  ext: typeof ImageExtensions;
+  ext: ImageExtension;
 };
